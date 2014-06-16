@@ -4,10 +4,14 @@ var fs = require('fs');
 var path = require('path');
 
 var server = http.createServer(function (req, res) {
-  console.log(__dirname);
-  console.log(req.url);
+  if (path.extname(req.url) === '.ico') { return res.end(); }
   var resourcePath = path.resolve(__dirname + req.url);
-  fs.createReadStream(resourcePath, {encoding: 'utf8'}).pipe(res);
+  if (path.extname(req.url)) {
+    fs.createReadStream(resourcePath, {encoding: 'utf8'}).pipe(res);
+  } else {
+    fs.createReadStream(path.resolve(resourcePath + '/index.html'),
+      {encoding: 'utf8'}).pipe(res);
+  }
 });
 
 console.log('the server is listening');
